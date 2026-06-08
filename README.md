@@ -1,234 +1,332 @@
-Programacion en redes - Practica Formativa 3
+Programacion en Redes - Practica formativa obligatoria 3
 
 Diagrama solicitado:
 
-<img width="4261" height="1830" alt="Diagrama" src="https://github.com/user-attachments/assets/508e813d-5114-4d91-898c-9111c1d18698" />
+<img width="4261" height="1830" alt="Diagrama" src="https://github.com/user-attachments/assets/03e66c52-5f9d-4f23-95ec-5e5d54443567" />
 
 
-Sistema Distribuido de Gestión de Tareas:
-Descripción
+# Sistema Distribuido de Gestión de Tareas
+
+## Descripción
 
 Este proyecto implementa un sistema distribuido de gestión de tareas utilizando una arquitectura Cliente-Servidor basada en TCP.
 
 Los usuarios pueden:
 
-Registrarse en el sistema.
-Iniciar sesión.
-Crear tareas.
-Consultar sus tareas.
-Eliminar tareas.
+* Registrarse en el sistema.
+* Iniciar sesión.
+* Crear tareas.
+* Consultar sus tareas.
+* Eliminar tareas.
 
 La información se almacena de forma persistente en una base de datos SQLite y las contraseñas se almacenan de manera segura utilizando hashing con PBKDF2-HMAC-SHA256.
 
-Arquitectura
+---
+
+## Arquitectura
 
 El sistema está compuesto por dos aplicaciones:
 
-Cliente (cliente.py)
+### Cliente (`cliente.py`)
 
 Aplicación de consola que permite a los usuarios interactuar con el sistema.
 
 Funciones disponibles:
 
-Registro de usuarios.
-Inicio de sesión.
-Consulta de tareas.
-Creación de tareas.
-Eliminación de tareas.
-Cierre de sesión.
-Servidor (servidor.py)
+* Registro de usuarios.
+* Inicio de sesión.
+* Consulta de tareas.
+* Creación de tareas.
+* Eliminación de tareas.
+* Cierre de sesión.
+
+### Servidor (`servidor.py`)
 
 Servidor TCP multihilo encargado de:
 
-Recibir solicitudes de clientes.
-Validar credenciales.
-Gestionar usuarios.
-Gestionar tareas.
-Acceder a la base de datos.
-Responder en formato JSON.
-Tecnologías Utilizadas
-Python 3
-TCP Sockets
-SQLite3
-JSON
-ThreadPoolExecutor
-Multithreading
-PBKDF2-HMAC-SHA256
-HMAC
-Estructura del Proyecto
+* Recibir solicitudes de clientes.
+* Validar credenciales.
+* Gestionar usuarios.
+* Gestionar tareas.
+* Acceder a la base de datos.
+* Responder en formato JSON.
+
+---
+
+## Tecnologías Utilizadas
+
+* Python 3
+* TCP Sockets
+* SQLite3
+* JSON
+* ThreadPoolExecutor
+* Multithreading
+* PBKDF2-HMAC-SHA256
+* HMAC
+
+---
+
+## Estructura del Proyecto
+
+```text
 .
 ├── cliente.py
 ├── servidor.py
 ├── tareas.db
 └── README.md
-Base de Datos
+```
+
+---
+
+## Base de Datos
 
 El sistema crea automáticamente una base de datos SQLite llamada:
 
+```text
 tareas.db
+```
 
 La base contiene las siguientes tablas:
 
-usuarios
-Campo	Tipo
-id	INTEGER
-usuario	TEXT
-salt	TEXT
-contrasena_hash	TEXT
-tareas
-Campo	Tipo
-id	INTEGER
-usuario_id	INTEGER
-descripcion	TEXT
-creada_en	TEXT
-Seguridad
+### usuarios
+
+| Campo           | Tipo    |
+| --------------- | ------- |
+| id              | INTEGER |
+| usuario         | TEXT    |
+| salt            | TEXT    |
+| contrasena_hash | TEXT    |
+
+### tareas
+
+| Campo       | Tipo    |
+| ----------- | ------- |
+| id          | INTEGER |
+| usuario_id  | INTEGER |
+| descripcion | TEXT    |
+| creada_en   | TEXT    |
+
+---
+
+## Seguridad
 
 Las contraseñas nunca se almacenan en texto plano.
 
 Para cada usuario:
 
-Se genera un salt aleatorio.
-Se aplica PBKDF2-HMAC-SHA256.
-Se almacena únicamente:
-Salt
-Hash generado
+1. Se genera un salt aleatorio.
+2. Se aplica PBKDF2-HMAC-SHA256.
+3. Se almacena únicamente:
+
+   * Salt
+   * Hash generado
 
 Durante el inicio de sesión se vuelve a calcular el hash y se compara utilizando:
 
+```python
 hmac.compare_digest()
-Comunicación Cliente-Servidor
+```
+
+---
+
+## Comunicación Cliente-Servidor
 
 La comunicación se realiza mediante sockets TCP.
 
 Cada mensaje enviado utiliza formato JSON.
 
-Ejemplo de solicitud
+### Ejemplo de solicitud
+
+```json
 {
     "accion": "login",
     "usuario": "juan",
     "contrasena": "1234"
 }
-Ejemplo de respuesta exitosa
+```
+
+### Ejemplo de respuesta exitosa
+
+```json
 {
     "ok": true,
     "mensaje": "Bienvenido, juan!"
 }
-Ejemplo de respuesta con error
+```
+
+### Ejemplo de respuesta con error
+
+```json
 {
     "ok": false,
     "error": "Credenciales invalidas."
 }
-Acciones Disponibles
-Registrar usuario
+```
+
+---
+
+## Acciones Disponibles
+
+### Registrar usuario
 
 Permite crear una nueva cuenta.
 
 Solicitud:
 
+```json
 {
     "accion": "registrar",
     "usuario": "juan",
     "contrasena": "1234"
 }
-Iniciar sesión
+```
+
+---
+
+### Iniciar sesión
 
 Valida las credenciales del usuario.
 
 Solicitud:
 
+```json
 {
     "accion": "login",
     "usuario": "juan",
     "contrasena": "1234"
 }
-Crear tarea
+```
+
+---
+
+### Crear tarea
 
 Crea una nueva tarea asociada al usuario autenticado.
 
 Solicitud:
 
+```json
 {
     "accion": "crear_tarea",
     "usuario": "juan",
     "contrasena": "1234",
     "descripcion": "Estudiar programación"
 }
-Listar tareas
+```
+
+---
+
+### Listar tareas
 
 Obtiene todas las tareas del usuario.
 
 Solicitud:
 
+```json
 {
     "accion": "listar_tareas",
     "usuario": "juan",
     "contrasena": "1234"
 }
-Eliminar tarea
+```
+
+---
+
+### Eliminar tarea
 
 Elimina una tarea existente.
 
 Solicitud:
 
+```json
 {
     "accion": "eliminar_tarea",
     "usuario": "juan",
     "contrasena": "1234",
     "id": 1
 }
-Ejecución
-Iniciar el servidor
+```
+
+---
+
+## Ejecución
+
+### Iniciar el servidor
+
+```bash
 python servidor.py
+```
 
 Opcionalmente:
 
+```bash
 python servidor.py --host 127.0.0.1 --port 5001 --workers 4
+```
 
 Parámetros:
 
-Parámetro	Descripción
---host	Dirección IP del servidor
---port	Puerto de escucha
---workers	Cantidad de workers del ThreadPool
-Iniciar el cliente
+| Parámetro | Descripción                        |
+| --------- | ---------------------------------- |
+| --host    | Dirección IP del servidor          |
+| --port    | Puerto de escucha                  |
+| --workers | Cantidad de workers del ThreadPool |
+
+---
+
+### Iniciar el cliente
+
+```bash
 python cliente.py
+```
 
 Opcionalmente:
 
+```bash
 python cliente.py --host 127.0.0.1 --port 5001
-Concurrencia
+```
+
+---
+
+## Concurrencia
 
 El servidor utiliza dos niveles de concurrencia:
 
-Hilo por cliente
+### Hilo por cliente
 
 Cada cliente conectado es atendido mediante un hilo independiente.
 
-Pool de Workers
+### Pool de Workers
 
 Las solicitudes recibidas son procesadas por un:
 
+```python
 ThreadPoolExecutor
+```
 
 Esto permite:
 
-Atender múltiples clientes simultáneamente.
-Reutilizar hilos.
-Mejorar el rendimiento del servidor.
-Manejo de Errores
+* Atender múltiples clientes simultáneamente.
+* Reutilizar hilos.
+* Mejorar el rendimiento del servidor.
+
+---
+
+## Manejo de Errores
 
 El sistema contempla errores tales como:
 
-Usuario existente.
-Credenciales inválidas.
-JSON inválido.
-Pérdida de conexión.
-IDs inexistentes.
-Acciones no reconocidas.
-Campos faltantes.
+* Usuario existente.
+* Credenciales inválidas.
+* JSON inválido.
+* Pérdida de conexión.
+* IDs inexistentes.
+* Acciones no reconocidas.
+* Campos faltantes.
 
 Todas las respuestas de error son enviadas en formato JSON.
 
-Autores
+---
+
+## Autores
 
 Proyecto desarrollado como práctica de Sistemas Distribuidos utilizando Python, sockets TCP, concurrencia y persistencia mediante SQLite.
