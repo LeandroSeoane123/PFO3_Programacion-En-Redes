@@ -2,6 +2,7 @@ Programacion en redes - Practica Formativa 3
 
 Diagrama solicitado:
 
+<img width="4261" height="1830" alt="Diagrama" src="https://github.com/user-attachments/assets/508e813d-5114-4d91-898c-9111c1d18698" />
 
 
 Sistema Distribuido de Gestión de Tareas:
